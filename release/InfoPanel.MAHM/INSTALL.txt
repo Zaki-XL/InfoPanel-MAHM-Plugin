@@ -1,0 +1,16 @@
+[InfoPanel MAHM Plugin Installation]
+
+1. Copy this entire folder ("InfoPanel.MAHM") to:
+   C:\ProgramData\InfoPanel\plugins\
+
+2. The resulting directory structure should be:
+   C:\ProgramData\InfoPanel\plugins\InfoPanel.MAHM\InfoPanel.MAHM.dll
+   C:\ProgramData\InfoPanel\plugins\InfoPanel.MAHM\PluginInfo.ini
+
+3. Restart InfoPanel.
+   You will see "MSI Afterburner" under the sensor sources.
+
+[Important Note]
+Due to InfoPanel's architecture, available sensors are scanned at startup.
+If you add or remove monitored hardware items in MSI Afterburner,
+please restart InfoPanel to apply the changes.

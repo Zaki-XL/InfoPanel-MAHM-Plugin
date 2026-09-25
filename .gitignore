@@ -1,0 +1,22 @@
+## Build and Output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+!release/InfoPanel.MAHM/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## JetBrains / Rider
+.idea/
+*.sln.iml
+
+## OS Generated
+.DS_Store
+Thumbs.db
+desktop.ini
