@@ -1,6 +1,6 @@
 # InfoPanel MSI Afterburner (MAHM) Plugin
 
-English | [日本語 (Japanese)](README.md)
+English | [譌･譛ｬ隱・(Japanese)](README.md)
 
 A high-performance, crash-free **MSI Afterburner Shared Memory Plugin** for [InfoPanel](https://infopanel.net) (v1.4+).
 Reads real-time hardware metrics directly from MSI Afterburner's shared memory (`MAHMSharedMemory`) and presents them cleanly and reliably on InfoPanel.
@@ -26,7 +26,7 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
   - **`GPU`** : Utilization, VRAM usage (`Memory usage` [MB]), VRAM usage % (`FB usage (VRAM Usage)` [%]), temperature, fan speeds, core/memory clocks, power, status.
   - **`GPU - Advanced & Limits`** : VID/BUS usage, thermal/power throttling limit flags.
   - **`CPU`** : Overall CPU usage, package temperature, clock speed, power, status.
-  - **`CPU - Cores`** : Per-core temperatures, usage, and clocks (CPU1–CPU20+).
+  - **`CPU - Cores`** : Per-core temperatures, usage, and clocks (CPU1窶鼎PU20+).
   - **`Memory`** : System RAM usage and commit charge.
   - **`Gaming (RTSS)`** : Framerate (FPS), frametime (ms), Min/Avg/Max FPS, and gaming status.
 - **Smart N/A Handling & Sentinel Value Normalization**:
@@ -58,9 +58,9 @@ C:\ProgramData\InfoPanel\plugins\
 Expected directory tree:
 ```text
 C:\ProgramData\InfoPanel\plugins\
-└── InfoPanel.MAHM\
-    ├── InfoPanel.MAHM.dll
-    └── PluginInfo.ini
+笏披楳笏 InfoPanel.MAHM\
+    笏懌楳笏 InfoPanel.MAHM.dll
+    笏披楳笏 PluginInfo.ini
 ```
 
 ### Step 2: Restart InfoPanel

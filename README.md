@@ -1,96 +1,71 @@
-# InfoPanel MSI Afterburner (MAHM) プラグイン
+# InfoPanel MSI Afterburner (MAHM) 繝励Λ繧ｰ繧､繝ｳ
 
-[English](README_EN.md) | 日本語
-
-[InfoPanel](https://infopanel.net) (バージョン 1.4 以降) 向けの **MSI Afterburner 共有メモリ連携プラグイン** です。
-PC モニタリングのデファクトスタンダードである **MSI Afterburner** の共有メモリ（`MAHMSharedMemory`）から直接ハードウェア情報を取得し、InfoPanel 上に美しく安全にリアルタイム表示します。
-
-> **NOTE: 「MAHM」とは？**  
-> **MAHM** は **M**SI **A**fterburner **H**ardware **M**onitor の略称です。MSI Afterburner が外部アプリケーション向けにハードウェア監視テレメトリを公開している Windows 共有メモリ（`MAHMSharedMemory`）や SDK の公式内部識別子に由来しています。
-
+[English](README_EN.md) | 譌･譛ｬ隱・
+[InfoPanel](https://infopanel.net) (繝舌・繧ｸ繝ｧ繝ｳ 1.4 莉･髯・ 蜷代￠縺ｮ **MSI Afterburner 蜈ｱ譛峨Γ繝｢繝ｪ騾｣謳ｺ繝励Λ繧ｰ繧､繝ｳ** 縺ｧ縺吶・PC 繝｢繝九ち繝ｪ繝ｳ繧ｰ縺ｮ繝・ヵ繧｡繧ｯ繝医せ繧ｿ繝ｳ繝繝ｼ繝峨〒縺ゅｋ **MSI Afterburner** 縺ｮ蜈ｱ譛峨Γ繝｢繝ｪ・・MAHMSharedMemory`・峨°繧臥峩謗･繝上・繝峨え繧ｧ繧｢諠・ｱ繧貞叙蠕励＠縲！nfoPanel 荳翫↓鄒弱＠縺丞ｮ牙・縺ｫ繝ｪ繧｢繝ｫ繧ｿ繧､繝陦ｨ遉ｺ縺励∪縺吶・
+> **NOTE: 縲勲AHM縲阪→縺ｯ・・*  
+> **MAHM** 縺ｯ **M**SI **A**fterburner **H**ardware **M**onitor 縺ｮ逡･遘ｰ縺ｧ縺吶・SI Afterburner 縺悟､夜Κ繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ蜷代￠縺ｫ繝上・繝峨え繧ｧ繧｢逶｣隕悶ユ繝ｬ繝｡繝医Μ繧貞・髢九＠縺ｦ縺・ｋ Windows 蜈ｱ譛峨Γ繝｢繝ｪ・・MAHMSharedMemory`・峨ｄ SDK 縺ｮ蜈ｬ蠑丞・驛ｨ隴伜挨蟄舌↓逕ｱ譚･縺励※縺・∪縺吶・
 ---
 
-## 開発の背景と本プラグインの強み
+## 髢狗匱縺ｮ閭梧勹縺ｨ譛ｬ繝励Λ繧ｰ繧､繝ｳ縺ｮ蠑ｷ縺ｿ
 
-従来のプラグインでは、GPU 監視ライブラリ（NVML 等）のクラッシュにより InfoPanel 全体が巻き添えで落ちる問題がありました。
-本プラグインは **MSI Afterburner が収集した集計データを Windows 共有メモリ経由でリードオンリー取得** するため、InfoPanel 本体をハードウェアの直接制御から完全に分離し、**100% の安定性と耐障害性** を実現しています。
-
+蠕捺擂縺ｮ繝励Λ繧ｰ繧､繝ｳ縺ｧ縺ｯ縲；PU 逶｣隕悶Λ繧､繝悶Λ繝ｪ・・VML 遲会ｼ峨・繧ｯ繝ｩ繝・す繝･縺ｫ繧医ｊ InfoPanel 蜈ｨ菴薙′蟾ｻ縺肴ｷｻ縺医〒關ｽ縺｡繧句撫鬘後′縺ゅｊ縺ｾ縺励◆縲・譛ｬ繝励Λ繧ｰ繧､繝ｳ縺ｯ **MSI Afterburner 縺悟庶髮・＠縺滄寔險医ョ繝ｼ繧ｿ繧・Windows 蜈ｱ譛峨Γ繝｢繝ｪ邨檎罰縺ｧ繝ｪ繝ｼ繝峨が繝ｳ繝ｪ繝ｼ蜿門ｾ・* 縺吶ｋ縺溘ａ縲！nfoPanel 譛ｬ菴薙ｒ繝上・繝峨え繧ｧ繧｢縺ｮ逶ｴ謗･蛻ｶ蠕｡縺九ｉ螳悟・縺ｫ蛻・屬縺励・*100% 縺ｮ螳牙ｮ壽ｧ縺ｨ閠宣囿螳ｳ諤ｧ** 繧貞ｮ溽樟縺励※縺・∪縺吶・
 ---
 
-## 主な特徴
+## 荳ｻ縺ｪ迚ｹ蠕ｴ
 
-- **完全クラッシュフリー設計**:
-  ハードウェアへの直接アクセスを排し、Afterburner の共有メモリを読み取るだけの安全設計。
-- **洗練された階層コンテナ分類（案1）**:
-  Afterburner が公開する膨大なセンサー群を、プレフィックス重複のない美しい 6 つのコンテナに自動整理：
-  - **`GPU`** : 使用率、VRAM使用量（`Memory usage` [MB]）、VRAM利用率（`FB usage (VRAM Usage)` [%]）、温度、ファン速度/回転数、コア/メモリクロック、消費電力、ステータス
-  - **`GPU - Advanced & Limits`** : VID利用率、BUS利用率、Temp/Power等のサーマル・電力制限スロットリングフラグ
-  - **`CPU`** : CPU 全体使用率、全体温度、動作周波数、消費電力、ステータス（※普段使いはここだけで完結）
-  - **`CPU - Cores`** : 各コア（CPU1〜20等）ごとの個別温度・使用率・動作周波数
-  - **`Memory`** : RAM 実メモリ使用量、コミットチャージ
-  - **`Gaming (RTSS)`** : フレームレート (FPS)、描画フレーム時間 (Frametime)、FPS Min/Avg/Max、ゲーミング稼働ステータス
-- **スマートな「N/A」表示とセンチネル値の無効化**:
-  - ゲーム未起動時や未計測時、Afterburner/RTSS 特有の未計測センチネル値（`FLT_MAX` / `3.4028235E+38`）を自動検知して `float.NaN` および `"N/A"` へ正規化。
-  - `Gaming Status` はゲーム起動中（`Framerate >= 1.0 FPS`）のみ `Active` となり、未起動時は `Idle (No Game Detected)` と判定。ゲーム非アクティブ時は Gaming 指標がすべて安全に `N/A` 表示となります。
-- **FPS Min / Max の集計範囲**:
-  - `Framerate Min / Max` は、現在のゲームプロセスが起動してから現在までのセッション全体（または Afterburner ベンチマークホットキーによる測定区間）での最小値・最大値を反映します。
-- **堅牢な自動テストスイート完備**:
-  - 共有メモリ破損・予期せぬ例外・部分欠損・極値境界・スレッドセーフティ、および実機ハードウェア結合テスト（全30件）を 100% パス。
-
+- **螳悟・繧ｯ繝ｩ繝・す繝･繝輔Μ繝ｼ險ｭ險・*:
+  繝上・繝峨え繧ｧ繧｢縺ｸ縺ｮ逶ｴ謗･繧｢繧ｯ繧ｻ繧ｹ繧呈賜縺励、fterburner 縺ｮ蜈ｱ譛峨Γ繝｢繝ｪ繧定ｪｭ縺ｿ蜿悶ｋ縺縺代・螳牙・險ｭ險医・- **豢礼ｷｴ縺輔ｌ縺滄嚴螻､繧ｳ繝ｳ繝・リ蛻・｡橸ｼ域｡・・・*:
+  Afterburner 縺悟・髢九☆繧玖・螟ｧ縺ｪ繧ｻ繝ｳ繧ｵ繝ｼ鄒､繧偵√・繝ｬ繝輔ぅ繝・け繧ｹ驥崎､・・縺ｪ縺・ｾ弱＠縺・6 縺､縺ｮ繧ｳ繝ｳ繝・リ縺ｫ閾ｪ蜍墓紛逅・ｼ・  - **`GPU`** : 菴ｿ逕ｨ邇・〃RAM菴ｿ逕ｨ驥擾ｼ・Memory usage` [MB]・峨〃RAM蛻ｩ逕ｨ邇・ｼ・FB usage (VRAM Usage)` [%]・峨∵ｸｩ蠎ｦ縲√ヵ繧｡繝ｳ騾溷ｺｦ/蝗櫁ｻ｢謨ｰ縲√さ繧｢/繝｡繝｢繝ｪ繧ｯ繝ｭ繝・け縲∵ｶ郁ｲｻ髮ｻ蜉帙√せ繝・・繧ｿ繧ｹ
+  - **`GPU - Advanced & Limits`** : VID蛻ｩ逕ｨ邇・。US蛻ｩ逕ｨ邇・ゝemp/Power遲峨・繧ｵ繝ｼ繝槭Ν繝ｻ髮ｻ蜉帛宛髯舌せ繝ｭ繝・ヨ繝ｪ繝ｳ繧ｰ繝輔Λ繧ｰ
+  - **`CPU`** : CPU 蜈ｨ菴謎ｽｿ逕ｨ邇・∝・菴捺ｸｩ蠎ｦ縲∝虚菴懷捉豕｢謨ｰ縲∵ｶ郁ｲｻ髮ｻ蜉帙√せ繝・・繧ｿ繧ｹ・遺ｻ譎ｮ谿ｵ菴ｿ縺・・縺薙％縺縺代〒螳檎ｵ撰ｼ・  - **`CPU - Cores`** : 蜷・さ繧｢・・PU1縲・0遲会ｼ峨＃縺ｨ縺ｮ蛟句挨貂ｩ蠎ｦ繝ｻ菴ｿ逕ｨ邇・・蜍穂ｽ懷捉豕｢謨ｰ
+  - **`Memory`** : RAM 螳溘Γ繝｢繝ｪ菴ｿ逕ｨ驥上√さ繝溘ャ繝医メ繝｣繝ｼ繧ｸ
+  - **`Gaming (RTSS)`** : 繝輔Ξ繝ｼ繝繝ｬ繝ｼ繝・(FPS)縲∵緒逕ｻ繝輔Ξ繝ｼ繝譎る俣 (Frametime)縲：PS Min/Avg/Max縲√ご繝ｼ繝溘Φ繧ｰ遞ｼ蜒阪せ繝・・繧ｿ繧ｹ
+- **繧ｹ繝槭・繝医↑縲君/A縲崎｡ｨ遉ｺ縺ｨ繧ｻ繝ｳ繝√ロ繝ｫ蛟､縺ｮ辟｡蜉ｹ蛹・*:
+  - 繧ｲ繝ｼ繝譛ｪ襍ｷ蜍墓凾繧・悴險域ｸｬ譎ゅ、fterburner/RTSS 迚ｹ譛峨・譛ｪ險域ｸｬ繧ｻ繝ｳ繝√ロ繝ｫ蛟､・・FLT_MAX` / `3.4028235E+38`・峨ｒ閾ｪ蜍墓､懃衍縺励※ `float.NaN` 縺翫ｈ縺ｳ `"N/A"` 縺ｸ豁｣隕丞喧縲・  - `Gaming Status` 縺ｯ繧ｲ繝ｼ繝襍ｷ蜍穂ｸｭ・・Framerate >= 1.0 FPS`・峨・縺ｿ `Active` 縺ｨ縺ｪ繧翫∵悴襍ｷ蜍墓凾縺ｯ `Idle (No Game Detected)` 縺ｨ蛻､螳壹ゅご繝ｼ繝髱槭い繧ｯ繝・ぅ繝匁凾縺ｯ Gaming 謖・ｨ吶′縺吶∋縺ｦ螳牙・縺ｫ `N/A` 陦ｨ遉ｺ縺ｨ縺ｪ繧翫∪縺吶・- **FPS Min / Max 縺ｮ髮・ｨ育ｯ・峇**:
+  - `Framerate Min / Max` 縺ｯ縲∫樟蝨ｨ縺ｮ繧ｲ繝ｼ繝繝励Ο繧ｻ繧ｹ縺瑚ｵｷ蜍輔＠縺ｦ縺九ｉ迴ｾ蝨ｨ縺ｾ縺ｧ縺ｮ繧ｻ繝・す繝ｧ繝ｳ蜈ｨ菴難ｼ医∪縺溘・ Afterburner 繝吶Φ繝√・繝ｼ繧ｯ繝帙ャ繝医く繝ｼ縺ｫ繧医ｋ貂ｬ螳壼玄髢難ｼ峨〒縺ｮ譛蟆丞､繝ｻ譛螟ｧ蛟､繧貞渚譏縺励∪縺吶・- **蝣・欧縺ｪ閾ｪ蜍輔ユ繧ｹ繝医せ繧､繝ｼ繝亥ｮ悟ｙ**:
+  - 蜈ｱ譛峨Γ繝｢繝ｪ遐ｴ謳阪・莠域悄縺帙〓萓句､悶・驛ｨ蛻・ｬ謳阪・讌ｵ蛟､蠅・阜繝ｻ繧ｹ繝ｬ繝・ラ繧ｻ繝ｼ繝輔ユ繧｣縲√♀繧医・螳滓ｩ溘ワ繝ｼ繝峨え繧ｧ繧｢邨仙粋繝・せ繝茨ｼ亥・30莉ｶ・峨ｒ 100% 繝代せ縲・
 > [!NOTE]
-> **監視項目の増減に関するご注意**:
-> InfoPanel のプラグイン仕様上、センサー一覧は InfoPanel の起動時にスキャン・確定されます。MSI Afterburner の設定画面（「モニタリング」タブ）で監視項目のチェックを増やしたり減らしたりした場合は、**変更を反映させるために InfoPanel を一度再起動**してください。
-
+> **逶｣隕夜・岼縺ｮ蠅玲ｸ帙↓髢｢縺吶ｋ縺疲ｳｨ諢・*:
+> InfoPanel 縺ｮ繝励Λ繧ｰ繧､繝ｳ莉墓ｧ倅ｸ翫√そ繝ｳ繧ｵ繝ｼ荳隕ｧ縺ｯ InfoPanel 縺ｮ襍ｷ蜍墓凾縺ｫ繧ｹ繧ｭ繝｣繝ｳ繝ｻ遒ｺ螳壹＆繧後∪縺吶・SI Afterburner 縺ｮ險ｭ螳夂判髱｢・医後Δ繝九ち繝ｪ繝ｳ繧ｰ縲阪ち繝厄ｼ峨〒逶｣隕夜・岼縺ｮ繝√ぉ繝・け繧貞｢励ｄ縺励◆繧頑ｸ帙ｉ縺励◆繧翫＠縺溷ｴ蜷医・縲・*螟画峩繧貞渚譏縺輔○繧九◆繧√↓ InfoPanel 繧剃ｸ蠎ｦ蜀崎ｵｷ蜍・*縺励※縺上□縺輔＞縲・
 ---
 
-## インストール方法（超簡単 2ステップ）
-
-### ステップ 1: プラグインフォルダの配置
-リポジトリ内の [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) フォルダを、そのまま以下のパスにコピーしてください：
-
+## 繧､繝ｳ繧ｹ繝医・繝ｫ譁ｹ豕包ｼ郁ｶ・ｰ｡蜊・2繧ｹ繝・ャ繝暦ｼ・
+### 繧ｹ繝・ャ繝・1: 繝励Λ繧ｰ繧､繝ｳ繝輔か繝ｫ繝縺ｮ驟咲ｽｮ
+繝ｪ繝昴ず繝医Μ蜀・・ [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) 繝輔か繝ｫ繝繧偵√◎縺ｮ縺ｾ縺ｾ莉･荳九・繝代せ縺ｫ繧ｳ繝斐・縺励※縺上□縺輔＞・・
 ```text
 C:\ProgramData\InfoPanel\plugins\
 ```
 
-配置後のフォルダ構造：
-```text
+驟咲ｽｮ蠕後・繝輔か繝ｫ繝讒矩・・```text
 C:\ProgramData\InfoPanel\plugins\
-└── InfoPanel.MAHM\
-    ├── InfoPanel.MAHM.dll
-    └── PluginInfo.ini
+笏披楳笏 InfoPanel.MAHM\
+    笏懌楳笏 InfoPanel.MAHM.dll
+    笏披楳笏 PluginInfo.ini
 ```
 
-### ステップ 2: InfoPanel の再起動
-InfoPanel を一度終了し、再起動します。
-ダッシュボードの設定画面で、センサーソースとして **`MSI Afterburner`** が選択可能になります。
+### 繧ｹ繝・ャ繝・2: InfoPanel 縺ｮ蜀崎ｵｷ蜍・InfoPanel 繧剃ｸ蠎ｦ邨ゆｺ・＠縲∝・襍ｷ蜍輔＠縺ｾ縺吶・繝繝・す繝･繝懊・繝峨・險ｭ螳夂判髱｢縺ｧ縲√そ繝ｳ繧ｵ繝ｼ繧ｽ繝ｼ繧ｹ縺ｨ縺励※ **`MSI Afterburner`** 縺碁∈謚槫庄閭ｽ縺ｫ縺ｪ繧翫∪縺吶・
+---
+
+## 髢｢騾｣繝ｪ繝ｳ繧ｯ
+- [InfoPanel 蜈ｬ蠑上し繧､繝・(https://infopanel.net)
+- [InfoPanel GitHub 繝ｪ繝昴ず繝医Μ](https://github.com/habibrehmansg/infopanel)
+- [MSI Afterburner 蜈ｬ蠑上し繧､繝・(https://www.msi.com/Landing/afterburner/graphics-cards)
 
 ---
 
-## 関連リンク
-- [InfoPanel 公式サイト](https://infopanel.net)
-- [InfoPanel GitHub リポジトリ](https://github.com/habibrehmansg/infopanel)
-- [MSI Afterburner 公式サイト](https://www.msi.com/Landing/afterburner/graphics-cards)
+## 髢狗匱繝ｻ繝薙Ν繝画焔鬆・
+### 蠢・育腸蠅・- .NET 8.0 SDK (Windows)
+- InfoPanel 1.4 莉･髯・- MSI Afterburner (繝｢繝九ち繝ｪ繝ｳ繧ｰ逕ｨ)
 
----
-
-## 開発・ビルド手順
-
-### 必須環境
-- .NET 8.0 SDK (Windows)
-- InfoPanel 1.4 以降
-- MSI Afterburner (モニタリング用)
-
-### ビルド
-```powershell
+### 繝薙Ν繝・```powershell
 dotnet build InfoPanel.MAHM.sln -c Release
 ```
 
-### 単体テストおよび実機結合テストの実行
-```powershell
+### 蜊倅ｽ薙ユ繧ｹ繝医♀繧医・螳滓ｩ溽ｵ仙粋繝・せ繝医・螳溯｡・```powershell
 dotnet test InfoPanel.MAHM.sln -c Release
 ```
 
 ---
 
-## ライセンス
+## 繝ｩ繧､繧ｻ繝ｳ繧ｹ
 MIT License
