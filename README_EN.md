@@ -5,6 +5,9 @@ English | [日本語 (Japanese)](README.md)
 A high-performance, crash-free **MSI Afterburner Shared Memory Plugin** for [InfoPanel](https://infopanel.net) (v1.4+).
 Reads real-time hardware metrics directly from MSI Afterburner's shared memory (`MAHMSharedMemory`) and presents them cleanly and reliably on InfoPanel.
 
+> **NOTE: What is "MAHM"?**  
+> **MAHM** stands for **M**SI **A**fterburner **H**ardware **M**onitor. It originates from the official internal subsystem and Windows shared memory interface (`MAHMSharedMemory`) provided by MSI Afterburner to expose hardware monitoring metrics to external tools.
+
 ---
 
 ## Background & Advantages

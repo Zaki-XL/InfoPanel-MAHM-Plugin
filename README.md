@@ -5,6 +5,9 @@
 [InfoPanel](https://infopanel.net) (バージョン 1.4 以降) 向けの **MSI Afterburner 共有メモリ連携プラグイン** です。
 PC モニタリングのデファクトスタンダードである **MSI Afterburner** の共有メモリ（`MAHMSharedMemory`）から直接ハードウェア情報を取得し、InfoPanel 上に美しく安全にリアルタイム表示します。
 
+> **NOTE: 「MAHM」とは？**  
+> **MAHM** は **M**SI **A**fterburner **H**ardware **M**onitor の略称です。MSI Afterburner が外部アプリケーション向けにハードウェア監視テレメトリを公開している Windows 共有メモリ（`MAHMSharedMemory`）や SDK の公式内部識別子に由来しています。
+
 ---
 
 ## 開発の背景と本プラグインの強み
