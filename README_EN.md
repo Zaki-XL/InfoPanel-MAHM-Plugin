@@ -1,6 +1,6 @@
 # InfoPanel MSI Afterburner (MAHM) Plugin
 
-English | [譌･譛ｬ隱・(Japanese)](README.md)
+English | [日本語 (Japanese)](README.md)
 
 A high-performance, crash-free **MSI Afterburner Shared Memory Plugin** for [InfoPanel](https://infopanel.net) (v1.4+).
 Reads real-time hardware metrics directly from MSI Afterburner's shared memory (`MAHMSharedMemory`) and presents them cleanly and reliably on InfoPanel.
@@ -26,19 +26,19 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
   - **`GPU`** : Utilization, VRAM usage (`Memory usage` [MB]), VRAM usage % (`FB usage (VRAM Usage)` [%]), temperature, fan speeds, core/memory clocks, power, status.
   - **`GPU - Advanced & Limits`** : VID/BUS usage, thermal/power throttling limit flags.
   - **`CPU`** : Overall CPU usage, package temperature, clock speed, power, status.
-  - **`CPU - Cores`** : Per-core temperatures, usage, and clocks (CPU1窶鼎PU20+).
+  - **`CPU - Cores`** : Per-core temperatures, usage, and clocks (CPU1–CPU20+).
   - **`Memory`** : System RAM usage and commit charge.
   - **`Gaming (RTSS)`** : Framerate (FPS), frametime (ms), Min/Avg/Max FPS, and gaming status.
+- **Automatic Polling Interval Synchronization (`HwPollPeriod`)**:
+  - Automatically queries the Windows Registry (`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`) at startup to locate `MSIAfterburner.cfg` and reads `HwPollPeriod` (ms).
+  - Dynamically binds InfoPanel's `UpdateInterval` to match Afterburner's exact monitoring cadence (e.g., 500ms or 1000ms), delivering fluid updates during high-frequency monitoring while preserving zero idle overhead (clamped safely between 100ms and 10000ms).
 - **Smart N/A Handling & Sentinel Value Normalization**:
   - Automatically identifies RTSS sentinel values (`FLT_MAX` / `3.4028235E+38`) when no game is active, normalizing them to `float.NaN` and `"N/A"`.
   - Gaming status activates (`Active`) only when true 3D rendering is detected (`Framerate >= 1.0 FPS`), falling back cleanly to `Idle (No Game Detected)` with `N/A` displays when idle.
 - **Framerate Min / Max Scope**:
   - Reflects the minimum and maximum FPS captured across the active game session (or benchmark hotkey recording interval).
-- **Automatic Polling Interval Synchronization (HwPollPeriod)**:
-  - Automatically queries the Windows Registry (`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`) at startup to locate `MSIAfterburner.cfg` and reads `HwPollPeriod` (ms).
-  - Dynamically binds InfoPanel's `UpdateInterval` to match Afterburner's exact monitoring cadence (e.g., 500ms or 1000ms), delivering fluid updates during high-frequency monitoring while preserving zero idle overhead (clamped safely between 100ms and 10000ms).
 - **Automated Test Suite (100% Pass)**:
-  - 44 comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, and live Afterburner integration.
+  - 44 comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, config parsing, and live Afterburner integration.
 
 > [!NOTE]
 > **Sensor List Changes**:
@@ -49,7 +49,7 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
 ## Installation (2 Easy Steps)
 
 ### Step 1: Copy Plugin Directory
-Copy the [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) folder directly to:
+Copy the [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) folder (or extracted from `InfoPanel.MAHM-v1.1.0.zip`) directly to:
 
 ```text
 C:\ProgramData\InfoPanel\plugins\
@@ -58,9 +58,9 @@ C:\ProgramData\InfoPanel\plugins\
 Expected directory tree:
 ```text
 C:\ProgramData\InfoPanel\plugins\
-笏披楳笏 InfoPanel.MAHM\
-    笏懌楳笏 InfoPanel.MAHM.dll
-    笏披楳笏 PluginInfo.ini
+└── InfoPanel.MAHM\
+    ├── InfoPanel.MAHM.dll
+    └── PluginInfo.ini
 ```
 
 ### Step 2: Restart InfoPanel
