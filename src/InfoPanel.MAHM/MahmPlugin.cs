@@ -43,7 +43,9 @@ namespace InfoPanel.MAHM
     public class MahmPlugin : BasePlugin
     {
         private readonly IMahmReaderService _readerService;
+        private readonly IAfterburnerConfigService _configService;
         private readonly object _lock = new();
+        private readonly TimeSpan _updateInterval;
 
         private readonly List<DynamicMetricPair> _metrics = new();
         private readonly List<IPluginContainer> _containers = new();
@@ -56,19 +58,26 @@ namespace InfoPanel.MAHM
         private DynamicMetricPair? _fpsMetric;
         private DynamicMetricPair? _frametimeMetric;
 
-        public MahmPlugin() : this(new MahmReaderService())
+        public MahmPlugin() : this(new MahmReaderService(), new AfterburnerConfigService())
         {
         }
 
         public MahmPlugin(IMahmReaderService readerService) 
+            : this(readerService, new AfterburnerConfigService())
+        {
+        }
+
+        public MahmPlugin(IMahmReaderService readerService, IAfterburnerConfigService configService) 
             : base("msi-afterburner-plugin", "MSI Afterburner", "Hardware monitoring via MSI Afterburner shared memory")
         {
             _readerService = readerService;
+            _configService = configService;
+            _updateInterval = _configService.GetPollingInterval();
         }
 
         [Obsolete]
         public override string? ConfigFilePath => null;
-        public override TimeSpan UpdateInterval => TimeSpan.FromSeconds(1);
+        public override TimeSpan UpdateInterval => _updateInterval;
 
         public override void Initialize()
         {

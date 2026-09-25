@@ -80,13 +80,29 @@
 
 ---
 
-## 4. 品質保証と自動テスト戦略
+## 4. ポーリング周期 (HwPollPeriod) 自動検知アーキテクチャ
 
-- **単体テスト (`SensorFormatterTests`, `MahmBufferParserTests`)**:
-  正常系フォーマット、ゼロ除算防止、センチネル変換、破損バッファ耐性を検証。
+`AfterburnerConfigService` は起動時に以下の順序で Afterburner の計測周期を検出し、プラグインの `UpdateInterval` に自動同期します：
+
+```text
+1. レジストリ照会: HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner -> InstallDir
+2. 設定ファイル探索: Profiles\MSIAfterburner.cfg
+3. キー抽出: [Settings] セクション内の HwPollPeriod=(\d+) (ミリ秒単位)
+4. 安全クランプ: 100ms <= 値 <= 10000ms の範囲内か検証
+5. フォールバック: ファイル不在や異常値時は安全に 1000ms (1秒) を返却
+```
+
+これにより、ユーザーが Afterburner 側で高速モニタリング（例: 250ms/500ms）を設定している環境では自動で高頻度更新となり、低頻度（例: 2000ms）設定では無駄な CPU 負荷を抑える完全な自律同期を実現しています。
+
+---
+
+## 5. 品質保証と自動テスト戦略
+
+- **単体テスト (`SensorFormatterTests`, `MahmBufferParserTests`, `AfterburnerConfigServiceTests`)**:
+  正常系フォーマット、ゼロ除算防止、センチネル変換、破損バッファ耐性、HwPollPeriod パースと安全クランプを検証。
 - **異常系・境界テスト (`BoundaryAndExceptionTests`)**:
   例外発生時のステータスハンドリング、動的欠損対応、20スレッド同時実行のスレッドセーフティを検証。
 - **ロジックテスト (`PluginLogicTests`)**:
-  案1の階層分類および `FB usage (VRAM Usage)` の GPU メイン配置を検証。
+  案1の階層分類、`FB usage (VRAM Usage)` の GPU メイン配置、動的 `UpdateInterval` 同期を検証。
 - **実機結合テスト (`RealAfterburnerIntegrationTests`)**:
-  稼働中の Afterburner から実データを取得し、ゲーム非稼働時の FPS `N/A` 判定および全コンテナ生成を検証。
+  稼働中の Afterburner から実データを取得し、実機 CFG からの 1000ms 取得、ゲーム非稼働時の FPS `N/A` 判定、全コンテナ生成を検証。

@@ -34,8 +34,11 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
   - Gaming status activates (`Active`) only when true 3D rendering is detected (`Framerate >= 1.0 FPS`), falling back cleanly to `Idle (No Game Detected)` with `N/A` displays when idle.
 - **Framerate Min / Max Scope**:
   - Reflects the minimum and maximum FPS captured across the active game session (or benchmark hotkey recording interval).
+- **Automatic Polling Interval Synchronization (HwPollPeriod)**:
+  - Automatically queries the Windows Registry (`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`) at startup to locate `MSIAfterburner.cfg` and reads `HwPollPeriod` (ms).
+  - Dynamically binds InfoPanel's `UpdateInterval` to match Afterburner's exact monitoring cadence (e.g., 500ms or 1000ms), delivering fluid updates during high-frequency monitoring while preserving zero idle overhead (clamped safely between 100ms and 10000ms).
 - **Automated Test Suite (100% Pass)**:
-  - 30 comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, and live Afterburner integration.
+  - 44 comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, and live Afterburner integration.
 
 > [!NOTE]
 > **Sensor List Changes**:
