@@ -32,13 +32,20 @@ PC モニタリングのデファクトスタンダードである **MSI Afterbu
 - **Afterburner 計測周期（HwPollPeriod）の自動検知・動的同期**:
   - 起動時に Windows レジストリ（`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`）経由で `MSIAfterburner.cfg` を高速スキャン。
   - ユーザーが Afterburner 側で設定した監視周期（例: 500ms、1000ms 等）に、InfoPanel の更新間隔（`UpdateInterval`）が完全自動同期。高頻度モニタリング時の滑らかさと低負荷時の省電力を両立（100ms〜10000ms の安全ガード付き）。
-- **スマートな「N/A」表示とセンチネル値の無効化**:
-  - ゲーム未起動時や未計測時、Afterburner/RTSS 特有の未計測センチネル値（`FLT_MAX` / `3.4028235E+38`）を自動検知して `float.NaN` および `"N/A"` へ正規化。
-  - `Gaming Status` はゲーム起動中（`Framerate >= 1.0 FPS`）のみ `Active` となり、未起動時は `Idle (No Game Detected)` と判定。ゲーム非アクティブ時は Gaming 指標がすべて安全に `N/A` 表示となります。
+- **スマートな未計測表示と「NaN / N/A」文字列および未測定数値のカスタマイズ**:
+  - ゲーム未起動時や未計測時、Afterburner/RTSS 特有の未計測センチネル値（`FLT_MAX` / `3.4028235E+38`）を自動検知して安全に正規化。
+  - **表示用テキスト項目 (`PluginText` / `(Display)`) のカスタマイズ**:
+    プラグイン同階層の `PluginInfo.ini` 内で `NaText="--"` のようにダブルクォーテーションで囲んで指定することで、未計測時の表示文字列（デフォルト: `"N/A"`）を `"-"` や `"--"`、`""`（非表示）など自由にカスタマイズ可能。
+  - **数値センサー項目 (`PluginSensor`) の未測定値の選択 (`UnmeasuredValue`)**:
+    InfoPanel の数値センサー用ウィジェットにバインドした際、未測定時の出力値を ini の `UnmeasuredValue` で切り替え可能：
+    - `0` : `0` を出力（画面上は 0 / 0 FPS 等と表示）
+    - `1` : `-1` を出力
+    - `2` : `NaN` を出力（デフォルト: InfoPanel 標準の NaN 表示）
+  - `Gaming Status` はゲーム起動中（`Framerate >= 1.0 FPS`）のみ `Active` となり、未起動時は `Idle (No Game Detected)` と判定。ゲーム非アクティブ時は Gaming 指標がすべて安全に設定された代替文字列または未測定数値表示となります。
 - **FPS Min / Max の集計範囲**:
   - `Framerate Min / Max` は、現在のゲームプロセスが起動してから現在までのセッション全体（または Afterburner ベンチマークホットキーによる測定区間）での最小値・最大値を反映します。
 - **堅牢な自動テストスイート完備**:
-  - 共有メモリ破損・予期せぬ例外・部分欠損・極値境界・スレッドセーフティ、HwPollPeriod パース、および実機ハードウェア結合テスト（全44件）を 100% パス。
+  - 共有メモリ破損・予期せぬ例外・部分欠損・極値境界・スレッドセーフティ、HwPollPeriod パース、PluginInfo.ini カスタマイズパース（NaText / UnmeasuredValue）、および実機ハードウェア結合テストを 100% パス。
 
 > [!NOTE]
 > **監視項目の増減に関するご注意**:
@@ -49,7 +56,7 @@ PC モニタリングのデファクトスタンダードである **MSI Afterbu
 ## インストール方法（超簡単 2ステップ）
 
 ### ステップ 1: プラグインフォルダの配置
-リポジトリ内の [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) フォルダ（または Releases からダウンロードした `InfoPanel.MAHM-v1.1.0.zip` を解凍したフォルダ）を、そのまま以下のパスにコピーしてください：
+リポジトリ内の [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) フォルダ（または Releases からダウンロードした `InfoPanel.MAHM-v1.1.1.zip` を解凍したフォルダ）を、そのまま以下のパスにコピーしてください：
 
 ```text
 C:\ProgramData\InfoPanel\plugins\

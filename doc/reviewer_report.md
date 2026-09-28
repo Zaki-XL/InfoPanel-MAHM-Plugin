@@ -1,45 +1,53 @@
-# 品質・セキュリティ監査報告書 (QA & Security Review Report)
+# 検証結果レビュー報告書 (QA & Security Review Report)
 
-- **対象プロジェクト**: InfoPanel MSI Afterburner Plugin (`InfoPanel.MAHM`)
-- **監査日**: 2026-09-25
-- **バージョン**: v1.1.0 (Afterburner ポーリング周期自動同期対応)
-- **監査担当**: QA & Security Role
-- **総合判定**: **PASS (承認完了)**
+## 1. 概要
+- **対象タスク**: NaN（無効値・未計測値）表示文字列のカスタマイズ、および数値センサー未測定値選択（0 / -1 / NaN）機能の実装
+- **ユーザー要件**:
+  - `NaText=` をダブルクォーテーション `""` で囲むことを前提とした設定読み込み
+  - `UnmeasuredValue=` による数値センサー未測定値（`0=0 / 1=-1 / 2=NaN`）の切り替え
+  - 仕様をドキュメント（`README.md`, `README_EN.md`）に明記
+- **リリースバージョン**: **v1.1.1**
+- **レビュー実施日**: 2026-09-29
+- **判定**: **APPROVED (承認・品質基準達成)**
 
 ---
 
-## 1. 監査結果サマリー
+## 2. 変更・追加内容
 
-| 監査項目 | 結果 | 判定 |
+### 2.1 新規ファイルおよび設定項目
+1. **[`src/InfoPanel.MAHM/Services/PluginSettings.cs`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/src/InfoPanel.MAHM/Services/PluginSettings.cs)**:
+   - `UnmeasuredValueMode` 列挙型（`Zero = 0`, `MinusOne = 1`, `NaN = 2`）の導入。
+   - `IPluginSettings` に `UnmeasuredValueMode` および `float UnmeasuredSensorValue` プロパティを追加。
+   - `ParseUnmeasuredValue`: ini から `UnmeasuredValue=0/1/2` を安全にパース。
+   - `StripQuotes`: ダブルクォーテーション（および全角引用符）で囲まれた文字列からクォートを除去し、空文字や空白を完全に保持。
+2. **[`tests/InfoPanel.MAHM.Tests/PluginSettingsTests.cs`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/tests/InfoPanel.MAHM.Tests/PluginSettingsTests.cs)**:
+   - `NaText` および `UnmeasuredValue` の全パターンの単体テストを網羅。
+
+### 2.2 既存ファイル変更
+1. **[`src/InfoPanel.MAHM/MahmPlugin.cs`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/src/InfoPanel.MAHM/MahmPlugin.cs)**:
+   - `DynamicMetricPair` に `UnmeasuredSensorValue` を渡し、未計測時に設定された数値（0.0f, -1.0f, または float.NaN）を代入。
+2. **[`src/InfoPanel.MAHM/PluginInfo.ini`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/src/InfoPanel.MAHM/PluginInfo.ini)** & **[`release/InfoPanel.MAHM/PluginInfo.ini`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/release/InfoPanel.MAHM/PluginInfo.ini)**:
+   - `NaText="N/A"` および `UnmeasuredValue=2`（0=0, 1=-1, 2=NaN）の設定雛形・説明コメントを記載。
+3. **[`README.md`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/README.md)** & **[`README_EN.md`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/README_EN.md)**:
+   - `UnmeasuredValue`（0=0, 1=-1, 2=NaN）の仕様と、表示用テキスト項目（`PluginText`）と数値センサー項目（`PluginSensor`）の使い分けを詳細に記載。
+4. **[`tests/InfoPanel.MAHM.Tests/PluginLogicTests.cs`](file:///e:/Project/InfoPanel%20MAHM%20Plugin/tests/InfoPanel.MAHM.Tests/PluginLogicTests.cs)**:
+   - `UnmeasuredValue=0` で `Sensor.Value` が 0.0f になること、`1` で -1.0f になることの動作検証テストを追加。
+
+---
+
+## 3. 品質およびセキュリティ検証結果
+
+| 検証項目 | 検証内容 | 結果 |
 | :--- | :--- | :--- |
-| 自動テスト通過率 | 44 / 44 件 (100%) | **PASS** |
-| ビルドステータス | 0 Warning, 0 Error (Release) | **PASS** |
-| ポーリング周期自動検知 | レジストリ探索・CFGパース・安全クランプ検証済み | **PASS** |
-| センチネル値・異常値耐性 | `FLT_MAX` 正規化・N/A化多層防御検証済み | **PASS** |
-| メトリクス分類・UI整合性 | `FB usage` メイン昇格・フレンドリーネーム検証済み | **PASS** |
-| プロセス分離・安定性 | リードオンリー共有メモリ + ホスト分離 | **PASS** |
+| **ビルド検証** | `dotnet build InfoPanel.MAHM.sln -c Release` | **PASS (警告0, エラー0)** |
+| **自動テストスイート** | `dotnet test InfoPanel.MAHM.sln -c Release` (全75テスト) | **PASS (成功75, 失敗0, スキップ0)** |
+| **未測定値切り替え** | `UnmeasuredValue` = 0 / 1 / 2 の動作 | **PASS (0.0f, -1.0f, float.NaN を正確に出力)** |
+| **ダブルクォーテーション対応** | `NaText="-"`, `NaText=""`, `NaText=" - "` の保持と抽出 | **PASS (完全確認)** |
+| **後方互換性** | ini 未設定・未配置時にデフォルト `2`（float.NaN）および `"N/A"` が維持されること | **PASS (全既存テスト100%通過)** |
+| **デプロイ検証** | `C:\ProgramData\InfoPanel\plugins\InfoPanel.MAHM\` への成果物配置 | **PASS** |
 
 ---
 
-## 2. 実装変更点に対する監査詳細
-
-### ① Afterburner ポーリング周期 (`HwPollPeriod`) 自動検知・動的同期
-- **設計**: `AfterburnerConfigService` が起動時にレジストリ（`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`）経由で `MSIAfterburner.cfg` を参照。
-- **安全ガード**: パース値が 100ms 〜 10000ms の範囲外、またはファイル不在・構文異常時はデフォルト 1000ms へ安全フォールバック。
-- **監査結果**: `AfterburnerConfigServiceTests`（12テストケース）および実機テストを含む全テストが 100% PASS。
-
-### ② Framerate 異常値対策（センチネル正規化）
-- **事象**: ゲーム未起動時に RTSS の無効値フラグ `3.4028235E+38` (`FLT_MAX`) が取得され、天文学的数値が表示されていた。
-- **対策**: `MahmBufferParser` で `Math.Abs(val) >= 3.4e38f` を検知して `float.NaN` へ変換。`SensorFormatter.IsInvalid` にもセンチネル条件を追加し多層防御を実施。
-- **監査結果**: 実機結合テスト `RealAfterburner_WhenNoGameRunning_FramerateIsNaAndStatusIsIdle` を含む全回帰テストが PASS することを確認。
-
-### ③ VRAM 利用率 (`FB usage`) の適正化
-- **事象**: VRAM 利用率（`FB usage` [%]）が詳細コンテナに隠れており、名称が分かりにくかった。
-- **対策**: メインの `GPU` コンテナに配置変更し、名称を `FB usage (VRAM Usage)` に更新。
-- **監査結果**: `PluginLogicTests` および `RealAfterburner_PopulatesProposal1ContainersCleanly` にて正常にメインコンテナに含まれることを確認。
-
----
-
-## 3. 総合評価
-
-すべてのセキュリティ・品質基準およびガードレールを満たしており、プロダクション利用に十分な品質であることを確認いたしました。
+## 4. 総合評価
+すべての要件を完全に満たし、数値センサーウィジェットにおける未測定値の選択肢（0 / -1 / NaN）が美しく提供され、ドキュメントにも仕様が明記されたことを確認しました。
+本リリースの完了を承認します。

@@ -32,13 +32,18 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
 - **Automatic Polling Interval Synchronization (`HwPollPeriod`)**:
   - Automatically queries the Windows Registry (`HKLM\SOFTWARE\WOW6432Node\MSI\Afterburner`) at startup to locate `MSIAfterburner.cfg` and reads `HwPollPeriod` (ms).
   - Dynamically binds InfoPanel's `UpdateInterval` to match Afterburner's exact monitoring cadence (e.g., 500ms or 1000ms), delivering fluid updates during high-frequency monitoring while preserving zero idle overhead (clamped safely between 100ms and 10000ms).
-- **Smart N/A Handling & Sentinel Value Normalization**:
-  - Automatically identifies RTSS sentinel values (`FLT_MAX` / `3.4028235E+38`) when no game is active, normalizing them to `float.NaN` and `"N/A"`.
-  - Gaming status activates (`Active`) only when true 3D rendering is detected (`Framerate >= 1.0 FPS`), falling back cleanly to `Idle (No Game Detected)` with `N/A` displays when idle.
+- **Smart N/A Handling, Customizable Text, and Unmeasured Sensor Value Selection via `PluginInfo.ini`**:
+  - Automatically identifies RTSS sentinel values (`FLT_MAX` / `3.4028235E+38`) when no game is active, normalizing them cleanly.
+  - **Display Text Items (`PluginText` / `(Display)`)**: Customize the unmeasured display text (default: `"N/A"`) to `"-"`, `"--"`, `""` (hidden), or any custom string by specifying `NaText="--"` in `PluginInfo.ini` (double quotes supported).
+  - **Numeric Sensor Items (`PluginSensor`)**: When binding numeric sensor widgets in InfoPanel, select the output for unmeasured states via `UnmeasuredValue`:
+    - `0` : Outputs `0` (renders as 0 / 0 FPS)
+    - `1` : Outputs `-1`
+    - `2` : Outputs `NaN` (default: InfoPanel native NaN rendering)
+  - Gaming status activates (`Active`) only when true 3D rendering is detected (`Framerate >= 1.0 FPS`), falling back cleanly to `Idle (No Game Detected)` with the configured placeholder when idle.
 - **Framerate Min / Max Scope**:
   - Reflects the minimum and maximum FPS captured across the active game session (or benchmark hotkey recording interval).
 - **Automated Test Suite (100% Pass)**:
-  - 44 comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, config parsing, and live Afterburner integration.
+  - Comprehensive automated tests covering header validation, sentinel filtering, corrupted entries, extreme values, concurrency, config/INI parsing (NaText / UnmeasuredValue), and live Afterburner integration.
 
 > [!NOTE]
 > **Sensor List Changes**:
@@ -49,7 +54,7 @@ This plugin reads aggregated telemetry from Windows Shared Memory in a read-only
 ## Installation (2 Easy Steps)
 
 ### Step 1: Copy Plugin Directory
-Copy the [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) folder (or extracted from `InfoPanel.MAHM-v1.1.0.zip`) directly to:
+Copy the [`release/InfoPanel.MAHM`](release/InfoPanel.MAHM) folder (or extracted from `InfoPanel.MAHM-v1.1.1.zip`) directly to:
 
 ```text
 C:\ProgramData\InfoPanel\plugins\

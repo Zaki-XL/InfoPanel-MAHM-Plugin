@@ -14,3 +14,13 @@
 Due to InfoPanel's architecture, available sensors are scanned at startup.
 If you add or remove monitored hardware items in MSI Afterburner,
 please restart InfoPanel to apply the changes.
+
+[Customization Settings (Optional)]
+You can customize unmeasured/idle states by editing "PluginInfo.ini":
+- NaText="N/A"
+  Custom string for unmeasured/idle display items (e.g., NaText="--", NaText="")
+- UnmeasuredValue=2
+  Output value for numeric sensor widgets when idle/unmeasured:
+  0 = 0 (displays as 0)
+  1 = -1
+  2 = NaN (default)

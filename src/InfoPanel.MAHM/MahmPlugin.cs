@@ -13,16 +13,20 @@ namespace InfoPanel.MAHM
         public string SourceName { get; }
         public string Unit { get; }
         public string NumberFormat { get; }
+        public string NaText { get; }
+        public float UnmeasuredSensorValue { get; }
         public PluginSensor Sensor { get; }
         public PluginText Text { get; }
 
-        public DynamicMetricPair(string id, string name, string sourceName, string unit, string numberFormat)
+        public DynamicMetricPair(string id, string name, string sourceName, string unit, string numberFormat, string? naText = null, float unmeasuredSensorValue = float.NaN)
         {
             SourceName = sourceName;
             Unit = unit;
             NumberFormat = numberFormat;
-            Sensor = new PluginSensor(id, name, float.NaN, unit);
-            Text = new PluginText(id + "-text", name + " (Display)", SensorFormatter.NaText);
+            NaText = naText ?? SensorFormatter.NaText;
+            UnmeasuredSensorValue = unmeasuredSensorValue;
+            Sensor = new PluginSensor(id, name, UnmeasuredSensorValue, unit);
+            Text = new PluginText(id + "-text", name + " (Display)", NaText);
         }
 
         public void Update(float? value)
@@ -30,12 +34,12 @@ namespace InfoPanel.MAHM
             if (value.HasValue && !SensorFormatter.IsInvalid(value.Value))
             {
                 Sensor.Value = value.Value;
-                Text.Value = SensorFormatter.Format(value.Value, Unit, NumberFormat);
+                Text.Value = SensorFormatter.Format(value.Value, Unit, NumberFormat, NaText);
             }
             else
             {
-                Sensor.Value = float.NaN;
-                Text.Value = SensorFormatter.NaText;
+                Sensor.Value = UnmeasuredSensorValue;
+                Text.Value = NaText;
             }
         }
     }
@@ -44,6 +48,7 @@ namespace InfoPanel.MAHM
     {
         private readonly IMahmReaderService _readerService;
         private readonly IAfterburnerConfigService _configService;
+        private readonly IPluginSettings _pluginSettings;
         private readonly object _lock = new();
         private readonly TimeSpan _updateInterval;
 
@@ -58,21 +63,28 @@ namespace InfoPanel.MAHM
         private DynamicMetricPair? _fpsMetric;
         private DynamicMetricPair? _frametimeMetric;
 
-        public MahmPlugin() : this(new MahmReaderService(), new AfterburnerConfigService())
+        public MahmPlugin() : this(new MahmReaderService(), new AfterburnerConfigService(), new PluginSettings())
         {
         }
 
         public MahmPlugin(IMahmReaderService readerService) 
-            : this(readerService, new AfterburnerConfigService())
+            : this(readerService, new AfterburnerConfigService(), new PluginSettings())
         {
         }
 
         public MahmPlugin(IMahmReaderService readerService, IAfterburnerConfigService configService) 
+            : this(readerService, configService, new PluginSettings())
+        {
+        }
+
+        public MahmPlugin(IMahmReaderService readerService, IAfterburnerConfigService configService, IPluginSettings pluginSettings) 
             : base("msi-afterburner-plugin", "MSI Afterburner", "Hardware monitoring via MSI Afterburner shared memory")
         {
             _readerService = readerService;
             _configService = configService;
+            _pluginSettings = pluginSettings;
             _updateInterval = _configService.GetPollingInterval();
+            SensorFormatter.NaText = _pluginSettings.NaText;
         }
 
         [Obsolete]
@@ -106,8 +118,8 @@ namespace InfoPanel.MAHM
                 gamingContainer.Entries.Add(_gamingStatus);
 
                 // Gaming (RTSS) メトリクスの予約配置
-                _fpsMetric = new DynamicMetricPair("framerate", "Framerate", "Framerate", "FPS", "F0");
-                _frametimeMetric = new DynamicMetricPair("frametime", "Frametime", "Frametime", "ms", "F1");
+                _fpsMetric = new DynamicMetricPair("framerate", "Framerate", "Framerate", "FPS", "F0", _pluginSettings.NaText, _pluginSettings.UnmeasuredSensorValue);
+                _frametimeMetric = new DynamicMetricPair("frametime", "Frametime", "Frametime", "ms", "F1", _pluginSettings.NaText, _pluginSettings.UnmeasuredSensorValue);
                 RegisterPair(gamingContainer, _fpsMetric);
                 RegisterPair(gamingContainer, _frametimeMetric);
 
@@ -139,7 +151,7 @@ namespace InfoPanel.MAHM
                     string unit = string.IsNullOrEmpty(data.Units) ? "" : data.Units;
                     string format = GuessFormat(name, unit);
 
-                    var pair = new DynamicMetricPair(id, displayName, name, unit, format);
+                    var pair = new DynamicMetricPair(id, displayName, name, unit, format, _pluginSettings.NaText, _pluginSettings.UnmeasuredSensorValue);
 
                     // 案1のコンテナ振り分け
                     if (IsGamingMetric(name))

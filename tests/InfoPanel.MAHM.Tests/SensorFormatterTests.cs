@@ -64,5 +64,19 @@ namespace InfoPanel.MAHM.Tests
             var result = SensorFormatter.Format(42.5f, "", "F1");
             Assert.Equal("42.5", result);
         }
+
+        [Fact]
+        public void Format_WithCustomNaTextArgument_ReturnsCustomString()
+        {
+            var result = SensorFormatter.Format(float.NaN, "%", naText: "--");
+            Assert.Equal("--", result);
+        }
+
+        [Fact]
+        public void FormatInt_WithCustomNaTextArgument_ReturnsCustomString()
+        {
+            var result = SensorFormatter.FormatInt(float.NaN, "FPS", naText: "-");
+            Assert.Equal("-", result);
+        }
     }
 }

@@ -7,7 +7,8 @@ namespace InfoPanel.MAHM.Services
     /// </summary>
     public static class SensorFormatter
     {
-        public const string NaText = "N/A";
+        public const string DefaultNaText = "N/A";
+        public static string NaText { get; set; } = DefaultNaText;
         public const float SentinelThreshold = 3.4e38f; // MSI Afterburner / RTSS FLT_MAX センチネル
 
         /// <summary>
@@ -22,13 +23,13 @@ namespace InfoPanel.MAHM.Services
 
         /// <summary>
         /// センサー値を単位付き文字列に整形する。
-        /// 値が無効な場合は "N/A" を返す。
+        /// 値が無効な場合は設定された無効表示文字列（デフォルト: "N/A"）を返す。
         /// </summary>
-        public static string Format(float? value, string unit, string format = "F1")
+        public static string Format(float? value, string unit, string format = "F1", string? naText = null)
         {
             if (IsInvalid(value))
             {
-                return NaText;
+                return naText ?? NaText;
             }
 
             string formattedNumber = value!.Value.ToString(format);
@@ -38,9 +39,9 @@ namespace InfoPanel.MAHM.Services
         /// <summary>
         /// 整数表示用のフォーマット（ファン回転数、クロック、FPSなど）
         /// </summary>
-        public static string FormatInt(float? value, string unit)
+        public static string FormatInt(float? value, string unit, string? naText = null)
         {
-            return Format(value, unit, "F0");
+            return Format(value, unit, "F0", naText);
         }
     }
 }

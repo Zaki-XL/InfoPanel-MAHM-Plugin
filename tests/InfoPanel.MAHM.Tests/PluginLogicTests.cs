@@ -77,5 +77,65 @@ namespace InfoPanel.MAHM.Tests
             var fpsText = (IPluginText)gamingContainer.Entries.Find(e => e.Id == "framerate-text")!;
             Assert.Equal("N/A", fpsText.Value);
         }
+
+        [Fact]
+        public async Task UpdateAsync_WithCustomNaTextSetting_AppliesCustomNaTextToAllUnmeasuredMetrics()
+        {
+            var mock = new MockReaderService
+            {
+                SensorsToReturn = new Dictionary<string, MahmSensorData>()
+            };
+            var customSettings = new PluginSettings("--");
+
+            var plugin = new MahmPlugin(mock, new AfterburnerConfigService(), customSettings);
+            var containers = new List<IPluginContainer>();
+            plugin.Load(containers);
+
+            await plugin.UpdateAsync(CancellationToken.None);
+
+            var gamingContainer = containers.Find(c => c.Id == "gaming-metrics")!;
+            var fpsText = (IPluginText)gamingContainer.Entries.Find(e => e.Id == "framerate-text")!;
+            Assert.Equal("--", fpsText.Value);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithUnmeasuredValueZero_SetsSensorValueToZero()
+        {
+            var mock = new MockReaderService
+            {
+                SensorsToReturn = new Dictionary<string, MahmSensorData>()
+            };
+            var settings = new PluginSettings("N/A", UnmeasuredValueMode.Zero);
+
+            var plugin = new MahmPlugin(mock, new AfterburnerConfigService(), settings);
+            var containers = new List<IPluginContainer>();
+            plugin.Load(containers);
+
+            await plugin.UpdateAsync(CancellationToken.None);
+
+            var gamingContainer = containers.Find(c => c.Id == "gaming-metrics")!;
+            var fpsSensor = (IPluginSensor)gamingContainer.Entries.Find(e => e.Id == "framerate")!;
+            Assert.Equal(0.0f, fpsSensor.Value);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_WithUnmeasuredValueMinusOne_SetsSensorValueToMinusOne()
+        {
+            var mock = new MockReaderService
+            {
+                SensorsToReturn = new Dictionary<string, MahmSensorData>()
+            };
+            var settings = new PluginSettings("N/A", UnmeasuredValueMode.MinusOne);
+
+            var plugin = new MahmPlugin(mock, new AfterburnerConfigService(), settings);
+            var containers = new List<IPluginContainer>();
+            plugin.Load(containers);
+
+            await plugin.UpdateAsync(CancellationToken.None);
+
+            var gamingContainer = containers.Find(c => c.Id == "gaming-metrics")!;
+            var fpsSensor = (IPluginSensor)gamingContainer.Entries.Find(e => e.Id == "framerate")!;
+            Assert.Equal(-1.0f, fpsSensor.Value);
+        }
     }
 }
